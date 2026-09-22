@@ -35,7 +35,17 @@ jobs:
             -e 's#`/api/#`/hubei-exam-study-workbench/api/#g' \
             -e 's#"/manifest.webmanifest"#"/hubei-exam-study-workbench/manifest.webmanifest"#g' \
             -e 's#"/favicon.svg"#"/hubei-exam-study-workbench/favicon.svg"#g'
-          sed -i 's#"start_url":"/"#"start_url":"/hubei-exam-study-workbench/"#; s#"scope":"/"#"scope":"/hubei-exam-study-workbench/"#' public/manifest.webmanifest
+          python - <<'PY'
+          import json
+          path = 'public/manifest.webmanifest'
+          with open(path, 'r', encoding='utf-8') as file:
+              manifest = json.load(file)
+          manifest['id'] = '/hubei-exam-study-workbench/'
+          manifest['start_url'] = '/hubei-exam-study-workbench/'
+          manifest['scope'] = '/hubei-exam-study-workbench/'
+          with open(path, 'w', encoding='utf-8') as file:
+              json.dump(manifest, file, ensure_ascii=False, indent=2)
+          PY
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
